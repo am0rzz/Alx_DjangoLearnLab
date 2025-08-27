@@ -4,7 +4,7 @@ from bookself.models import Book
 
 # Command
 
-Book.objects.all()
+Book.objects.get(title="1984")
 
 # Output
 
