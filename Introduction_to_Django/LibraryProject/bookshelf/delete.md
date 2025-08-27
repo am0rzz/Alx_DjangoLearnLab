@@ -1,6 +1,6 @@
 # Import the model
 
-from bookself.models import Book
+from bookshelf.models import Book
 
 # Command
 
