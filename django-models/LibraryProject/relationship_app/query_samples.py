@@ -1,20 +1,16 @@
-from . import models
-author_name = 'amr'
-filtered_books = models.Book.objects.filter(author__name = author_name)
+from models import Author, Book, Library, Librarian
 
-for book in filtered_books:
-    print(book)
+def get_book_by_author(author_name):
+    author = Author.objects.get(name=author_name)
+    books = Book.objects.filter(author = author)
+    return books
 
+def list_books_in_library(library_name):
+    library = Library.objects.get(name=library_name)
+    books = Book.objects.filter(library=library)
+    return books
 
-library_name = 'amr library'
-library = models.Library.objects.get(name = library_name)
-library_books = library.books.all()
-
-for book in library_books:
-    print(book)
-
-
-librarians = models.Librarian.objects.filter(library__name = library_name)
-
-for librarian in librarians:
-    print(librarian)
+def librarian_in_library(library_name):
+    library = Library.objects.get(name=library_name)
+    librarian = Librarian.objects.get(library=library)
+    return librarian
