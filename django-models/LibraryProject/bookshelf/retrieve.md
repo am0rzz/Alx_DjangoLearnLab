@@ -1,11 +1,3 @@
-# Import the model
-
-from bookself.models import Book
-
-# Command
-
-Book.objects.get(title="1984")
-
-# Output
-
-<Book: Book object (1)>
+book = Book.objects.get(title="1984")
+book.title, book.author, book.publication_year
+# Output: ('1984', 'George Orwell', 1949)
