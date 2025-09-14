@@ -7,7 +7,7 @@ from .models import Library
 
 def list_books(request):
     books = Book.objects.all()
-    context = {'book title': books}
+    context = {'books': books}
     return render(request,'relationship_app/list_books.html',context)
 
 class LibraryDetailView(DetailView):
@@ -18,7 +18,7 @@ class LibraryDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['books'] = self.object.books.all()
-        return object
+        return context
 
 
 
