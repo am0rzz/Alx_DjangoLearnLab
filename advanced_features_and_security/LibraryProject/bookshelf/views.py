@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth.decorators import permission_required
-
+from .forms import ExampleForm
 
 # Create your views here.
 
