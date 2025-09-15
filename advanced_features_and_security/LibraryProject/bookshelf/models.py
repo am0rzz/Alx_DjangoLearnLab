@@ -18,7 +18,6 @@ class CustomUser(AbstractUser):
 
 User = get_user_model()
 
-#
 class CustomUserManager(BaseUserManager):
     def create_user(self, date_of_birth, photo, password=None, **extra_fields):
         if not date_of_birth:
