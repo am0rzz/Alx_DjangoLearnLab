@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import permission_required
 # Create your views here.
 
 
-def add_book(request):
+def book_list(request):
     return HttpResponse('Added')
 
 @permission_required('bookshelf.can_edit',raise_exception=True)
