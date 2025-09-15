@@ -1,5 +1,6 @@
 from django.http import HttpResponse
-from django.contrib.auth.decorators import user_passes_test, permission_required
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import permission_required
 
 # Custom permission function
 from .models import UserProfile
