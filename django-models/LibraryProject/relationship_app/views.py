@@ -1,12 +1,46 @@
-from typing import Any
-from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse
+from django.contrib.auth.decorators import user_passes_test, permission_required
+
+# Custom permission function
+from .models import UserProfile
+
+def is_admin(user):
+    if not user.is_authenticated:
+        return False
+    try:
+        profile = UserProfile.objects.get(user=user)
+        return profile.role == 'Admin'
+    except UserProfile.DoesNotExist:
+        return False
+
+def is_librarian(user):
+    if not user.is_authenticated:
+        return False
+    try:
+        profile = UserProfile.objects.get(user=user)
+        return profile.role == 'Librarian'
+    except UserProfile.DoesNotExist:
+        return False
+
+def is_member(user):
+    if not user.is_authenticated:
+        return False
+    try:
+        profile = UserProfile.objects.get(user=user)
+        return profile.role == 'Member'
+    except UserProfile.DoesNotExist:
+        return False
+
+from django.contrib.auth.decorators import user_passes_test
+from django.shortcuts import render
 from django.views.generic.detail import DetailView
+from django.views.generic.edit import UpdateView, DeleteView
+from .models import Library, Book
+
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import login
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
-from django.contrib.auth.decorators import permission_required, user_passes_test
-from .models import Library, Book
+from django.http import HttpResponse
 
 # Create your views here.
 def list_books(request):
@@ -16,49 +50,36 @@ def list_books(request):
 
 class LibraryDetailView(DetailView):
     model = Library
-    template_name = "relationship_app/library_detail.html"
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        library = self.get_object()
+    template_name = 'relationship_app/library_detail.html'
+    context_object_name = 'library'
 
-class register(CreateView):
-    UserCreationForm()
-    template_name = 'relationship_app/register.html'
+class SignUpView(CreateView):
+    form_class = UserCreationForm
     success_url = reverse_lazy('login')
+    template_name = 'relationship_app/register.html'
 
-def is_admin(user):
-    return hasattr(user, 'userprofile') and user.userprofile.role == 'Admin'
-
-def is_librarian(user):
-    return hasattr(user, 'userprofile') and user.userprofile.role == 'Librarian'
-
-def is_member(user):
-    return hasattr(user, 'userprofile') and user.userprofile.role == 'Member'
-
-@user_passes_test(is_admin)
+@user_passes_test(is_admin, login_url='ad/')
 def admin_view(request):
-    return render(request, 'relationship_app/admin_view.html')
+    return HttpResponse("You are an admin")
 
-
-@user_passes_test(is_librarian)
+@user_passes_test(is_librarian, login_url='li/')
 def librarian_view(request):
-    return render(request, 'relationship_app/librarian_view.html')
+    return HttpResponse("You are a librarian")
 
-
-@user_passes_test(is_member)
+@user_passes_test(is_member, login_url='mb/')
 def member_view(request):
-    return render(request, 'relationship_app/member_view.html')
+    return HttpResponse("You are a member")
 
 @permission_required("relationship_app.can_add_book")
-def add_book(request):
-    return render(request, "relationship_app/add_book.html")
+def can_add_book(request):
+    return render(request,"relationship_app/add_book.html")
 
 @permission_required("relationship_app.can_change_book")
-def edit_book(request, pk):
-    book = get_object_or_404(Book, pk=pk)
+def can_edit_book(request, pk):
+    book = Book.objects.get(Book, pk=pk)
     return render(request, "relationship_app/edit_book.html", {"book": book})
 
 @permission_required("relationship_app.can_delete_book")
-def delete_book(request, pk):
-    book = get_object_or_404(Book, pk=pk)
+def can_delete_book(request, pk):
+    book = Book.objects.get(Book, pk=pk)
     return render(request, "relationship_app/delete_book.html", {"book": book})
